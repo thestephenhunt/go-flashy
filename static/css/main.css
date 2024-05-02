@@ -1,0 +1,8 @@
+@import url("/static/css/_nav.css");
+
+:root {
+    --digitWidth: 6ch;
+    --bgColor: #ebebeb;
+    --fontColor: #222222;
+    --smallFontColor: white;
+}
