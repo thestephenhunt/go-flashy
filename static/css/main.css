@@ -1,4 +1,5 @@
 @import url("/static/css/_nav.css");
+@import url("/static/css/_options.css");
 
 :root {
     --digitWidth: 6ch;

@@ -1,0 +1,63 @@
+#options-menu {
+    position: absolute;
+    right: 0;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 20px 0 0 20px;
+    box-shadow: 17px 17px 10px 5px rgba(0,0,0,0.5);
+    transform: translateX(100%);
+
+    &.opened {
+        transform: translateX(0%);
+    }
+
+    #options-tab {
+        position: absolute;
+        transform: rotate(90deg);
+        left: 0rem;
+        background-color: rgba(255,255,255,0.9);
+        padding: 1rem;
+        margin: 0;
+        top: 2rem;
+        transform-origin: top left;
+        border-radius: 0 0 20px 20px;
+    }
+    fieldset {
+        font-size: 2.5rem;
+        border: none;
+    }
+    legend {
+        color: var(--fontColor);
+        padding: 1rem;
+        font-weight: 600;
+    }
+    label {
+        padding-right: 1rem;
+        font-size: 2rem;
+    }
+    .select-wrapper {
+        position: relative;
+        float: right;
+
+        select {
+            width: 4rem;
+            height: 2.5rem;
+            padding: 0 0 0 0.75rem;
+            margin: 0;
+            box-sizing: border-box;
+            appearance: none;
+            font-size: 2rem;
+        }
+    }
+    .select-wrapper::after {
+      content: "▼";
+      font-size: 1.5rem;
+      top: 14px;
+      right: 5px;
+      position: absolute;
+      color: var(--bgColor);
+      pointer-events: none;
+    }
+    #newEqButton {
+        display: block;
+    }
+}
