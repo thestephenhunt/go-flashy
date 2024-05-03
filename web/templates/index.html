@@ -1,7 +1,13 @@
 {{define "index"}}
   {{template "_head"}}
   <body style="margin: 0" class="{{.}}">
-    {{template "_nav"}}
+    <header>
+      {{template "_nav"}}
+      <a href="#nav-menu" id="nav-menu-toggle">
+        <img src="/static/images/hamburger.svg" alt="Navigation drawer toggle" aria-controls="nav-menu" aria-expanded="false"/>
+      </a>
+      <h1>Flashy</h1>
+    </header>
     <noscript>
       <strong>We're sorry but Flashy doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
