@@ -1,0 +1,22 @@
+#equation {
+    font-size: 6rem;
+    display: flex;
+    width: var(--digitWidth);
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--fontColor);
+    letter-spacing: 2px;
+
+    p {
+        margin: 0;
+        text-align: right;
+    }
+}
+
+#first-term {
+    flex-basis: 100%;
+}
+
+#operator, #second-term {
+    flex-shrink: 1;
+}
