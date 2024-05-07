@@ -13,10 +13,10 @@
     }
 }
 
-#first-term {
+.term:first-child {
     flex-basis: 100%;
 }
 
-#operator, #second-term {
+#operator, .term {
     flex-shrink: 1;
 }

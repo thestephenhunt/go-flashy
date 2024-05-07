@@ -1,6 +1,6 @@
 {{define "index"}}
   {{template "_head"}}
-  <body style="margin: 0" class="{{.}}">
+  <body style="margin: 0" class='{{.Bg}}'>
     <header>
       {{template "_nav"}}
       <a href="#nav-menu" id="nav-menu-toggle">
@@ -11,7 +11,7 @@
     <main>
       {{template "_options"}}
       <section id="flash-card">
-        {{template "_equation-box"}}
+        {{template "_equation-box" .}}
         {{template "_answer-box"}}
       </section>
     </main>
