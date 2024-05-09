@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
+
+	"github.com/thestephenhunt/go-server/utils"
+	"github.com/thestephenhunt/go-server/web/components"
 )
 
 type IndexData struct {
@@ -24,8 +28,8 @@ var bgPattern = func() string {
 }
 var iData = IndexData{
 	Bg:         bgPattern(),
-	FirstTerm:  NewTerm(),
-	SecondTerm: NewTerm(),
+	FirstTerm:  utils.NewTerm(),
+	SecondTerm: utils.NewTerm(),
 	Operator:   "+",
 	Correct:    false,
 }
@@ -38,8 +42,8 @@ func reverseString(str string) (result string) {
 }
 
 func newEquationHandler(w http.ResponseWriter, r *http.Request) {
-	iData.FirstTerm = NewTerm()
-	iData.SecondTerm = NewTerm()
+	iData.FirstTerm = utils.NewTerm()
+	iData.SecondTerm = utils.NewTerm()
 	tmpl.ExecuteTemplate(w, "_flash-card", iData)
 }
 
@@ -49,33 +53,37 @@ func checkAnswerHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	if Solve(iData.FirstTerm, iData.SecondTerm, iData.Operator) == answer {
+	if utils.Solve(iData.FirstTerm, iData.SecondTerm, iData.Operator) == answer {
 		iData.Correct = true
 	}
 }
 
 func answerHandler(w http.ResponseWriter, r *http.Request) {
+	buttonComp := components.SubmitButton("Test")
 	fmt.Println("ANSWER")
 	fmt.Println(iData.Correct)
-	tmpl.ExecuteTemplate(w, "_correct", nil)
+	if iData.Correct {
+		buttonComp.Render(context.Background(), w)
+	} else {
+		buttonComp.Render(context.Background(), w)
+	}
 	fmt.Println("EXECUTED")
 }
 
 func newTermHandler(w http.ResponseWriter, r *http.Request) {
-	iData.FirstTerm = NewTerm()
+	iData.FirstTerm = utils.NewTerm()
 	tmpl.ExecuteTemplate(w, "term", iData.FirstTerm)
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("INDEX")
-	iData.FirstTerm = NewTerm()
-	iData.SecondTerm = NewTerm()
+	iData.FirstTerm = utils.NewTerm()
+	iData.SecondTerm = utils.NewTerm()
 	iData.Bg = bgPattern()
 	tmpl.ExecuteTemplate(w, "index", iData)
 }
 func main() {
 	fmt.Println("Server is running...")
-
 	fs := http.FileServer(http.Dir("static"))
 
 	mux := http.NewServeMux()
