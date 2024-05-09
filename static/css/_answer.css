@@ -21,7 +21,7 @@ input {
     filter: brightness(90%);
 }
 
-button {
+#answer-button {
     margin-top: 3rem;
     padding: 1rem;
     font-size: 1.5rem;
