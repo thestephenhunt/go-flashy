@@ -23,3 +23,10 @@ func Solve(f, s int, o string) int {
 		return -1
 	}
 }
+
+func ReverseString(str string) (result string) {
+	for _, v := range str {
+		result = string(v) + result
+	}
+	return
+}

@@ -1,0 +1,9 @@
+{{define "_button"}}
+{{if .Correct}}
+    <button type="submit" id="answer-button" hx-get="/new-equation" hx-target="#flash-card" hx-swap="outerHTML" hx-trigger="load delay:1s">Great job!</button>
+    {{else if .Attempted}}
+    <button type="submit" id="answer-button" hx-get="/try-again" hx-swap="outerHTML" hx-trigger="load delay:1s">Try again!</button>
+    {{else}}
+    <button type="submit" id="answer-button">Submit Answer</button>
+    {{end}}
+{{end}}
