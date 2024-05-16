@@ -11,8 +11,8 @@ type IndexData struct {
 }
 
 type User struct {
-	name     string
-	loggedIn bool
+	Name   string
+	Logged bool
 }
 
 func NewIndexDataContext(data IndexData) *IndexData {

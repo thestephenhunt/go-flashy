@@ -5,31 +5,38 @@ import (
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var db *sql.DB
 
-func loginUser(user string) (username string, loggedIn bool) {
-	stmt, _ := db.Prepare(`SELECT name FROM users WHERE name = 'user'`)
-	stmt.Exec(user)
-	username = user
-	loggedIn = true
-	//IData.User = user
-	log.Printf("LOGGED IN %s", user)
-	return username, loggedIn
-}
-func CreateUser(user, pw string) (string, bool) {
-	log.Println("TRYING TO CREATE")
-	stmt, err := db.Prepare(`INSERT INTO users (name, pw) VALUES (?, ?)`)
+func LoginUser(user, password string) (username string, loggedIn bool) {
+	var u, pwhash string
+	stmt, _ := db.Prepare(`SELECT name, pw FROM users WHERE name = ?`)
+	err := stmt.QueryRow(user).Scan(&u, &pwhash)
 	if err != nil {
 		log.Println(err)
+		return user, false
 	}
-	log.Println(stmt)
-	stmt.Exec(user, pw)
-	log.Println("Inserted")
-	name, logged := loginUser(user)
-	return name, logged
+	if CheckPasswordHash(password, pwhash) {
+		loggedIn = true
+	}
+	log.Printf("USER: %s", u)
+	return u, loggedIn
 }
+
+//	func CreateUser(user, pw string) (string, bool) {
+//		log.Println("TRYING TO CREATE")
+//		stmt, err := db.Prepare(`INSERT INTO users (name, pw) VALUES (?, ?)`)
+//		if err != nil {
+//			log.Println(err)
+//		}
+//		log.Println(stmt)
+//		stmt.Exec(user, pw)
+//		log.Println("Inserted")
+//		//name, logged := LoginUser(user)
+//		//return name, logged
+//	}
 func DbInit() error {
 	var err error
 
@@ -54,4 +61,14 @@ func DbInit() error {
 	stmt.Exec()
 
 	return db.Ping()
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

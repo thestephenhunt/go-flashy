@@ -2,11 +2,11 @@ package utils
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
-	"text/template"
 
 	database "github.com/thestephenhunt/go-server/db"
 )
@@ -32,10 +32,9 @@ func (ctx *IndexData) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	pw := r.FormValue("password")
 	fmt.Println(user)
 	fmt.Println(pw)
-	name, logged := database.CreateUser(user, pw)
-	log.Println(logged)
-	ctx.User.loggedIn = true
-	ctx.User.name = name
+	name, logged := database.LoginUser(user, pw)
+	ctx.User.Logged = logged
+	ctx.User.Name = name
 	log.Println(ctx)
 	tmpl.ExecuteTemplate(w, "_login", ctx)
 }

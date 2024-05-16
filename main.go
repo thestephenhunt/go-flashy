@@ -17,7 +17,10 @@ var data = utils.IndexData{
 	Operator:   "+",
 	Correct:    false,
 	Attempted:  false,
-	User:       utils.User{},
+	User: utils.User{
+		Name:   "",
+		Logged: false,
+	},
 }
 
 func main() {

@@ -1,7 +1,6 @@
 {{define "_login"}}
 <div id="login-container">
-    {{if not .User.loggedIn}}
-    <a href="" role="button">Login/Register</a>
+    {{template "login-button" .User}}
     <form id="login-form" hx-post="/login" hx-target="#login-container" hx-swap="outerHTML">
         <label>
             User:
@@ -13,8 +12,13 @@
         </label>
         <button type="submit">Login</button>
     </form>
-    {{else}}
-    <a href="">Hey, {{.User.name}}</a>
-    {{end}}
 </div>
+{{end}}
+
+{{define "login-button"}}
+    {{if .Logged}}
+    <a href="" role="button">Hey, {{.Name}}</a>
+    {{else}}
+    <a href="" role="button">Login/Register</a>
+    {{end}}
 {{end}}
