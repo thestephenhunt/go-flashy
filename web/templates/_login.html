@@ -1,24 +1,52 @@
 {{define "_login"}}
 <div id="login-container">
     {{template "login-button" .User}}
-    <form id="login-form" hx-post="/login" hx-target="#login-container" hx-swap="outerHTML">
-        <label>
-            User:
-            <input name="username" type="text" />
-        </label>
-        <label>
-            Password:
-            <input name="password" type="password" />
-        </label>
-        <button type="submit">Login</button>
-    </form>
+    <div id="user-menu">
+    {{if not .LoggedIn}}
+        <a href="" hx-get="/go-login" hx-target="#user-menu">Login</a>
+        <a href="" hx-get="/go-register" hx-target="#user-menu">Register</a>
+    {{end}}
+    </div>
 </div>
 {{end}}
 
 {{define "login-button"}}
     {{if .Logged}}
-    <a href="" role="button">Hey, {{.Name}}</a>
+    <a href="#" role="button" class="user-menu-button" onclick="openUserMenu()">Hey, {{.Name}}</a>
     {{else}}
-    <a href="" role="button">Login/Register</a>
+    <a href="#" role="button" class="user-menu-button" onclick="openUserMenu()">Login/Register</a>
     {{end}}
+{{end}}
+
+{{define "login-form"}}
+<form class="login-form" hx-post="/login" hx-target="#login-container" hx-swap="outerHTML">
+    <label>
+        User:
+        <input name="username" type="text" />
+    </label>
+    <label>
+        Password:
+        <input name="password" type="password" />
+    </label>
+    <button type="submit">Login</button>
+</form>
+<a href="" hx-get="/go-register" hx-target="#user-menu">Register</a>
+{{end}}
+
+{{define "register-form"}}
+<form class="register-form" hx-post="/register" hx-target="#login-container" hx-swap="outerHTML">
+    <label>
+        Name:
+        <input name="name" type="text" />
+    </label>
+    <label>
+        Username:
+        <input name="username" type="text" />
+    </label>
+    <label>
+        Password:
+        <input name="password" type="password" />
+    </label>
+    <button type="submit">Register</button>
+</form>
 {{end}}
