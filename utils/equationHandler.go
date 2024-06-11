@@ -3,15 +3,12 @@ package utils
 import (
 	"math/rand"
 	"strconv"
+	"strings"
 )
 
-func atoi(s string) int {
-	value, _ := strconv.Atoi(s)
-	return value
-}
-
-func NewTerm() int {
-	n := rand.Intn(100)
+func NewTerm(d int) int {
+	maxNum, _ := strconv.Atoi(strings.Repeat("9", d))
+	n := rand.Intn(maxNum)
 	return n
 }
 
@@ -19,6 +16,10 @@ func Solve(f, s int, o string) int {
 	switch o {
 	case "+":
 		return f + s
+	case "-":
+		return f - s
+	case "*":
+		return f * s
 	default:
 		return -1
 	}

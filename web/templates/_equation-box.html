@@ -1,7 +1,8 @@
 {{define "_equation-box"}}
+<form hx-post="/answer" hx-target="#answer-button" hx-swap="outerHTML" id="answer-box">
 <section id="equation">
-    <p class="term">{{.FirstTerm}}</p>
-    <p id="operator">{{.Operator}}</p>
-    <p class="term">{{.SecondTerm}}</p>
+    <p class="term"><input type="hidden" name="firstTerm" value="{{.FirstTerm}}"/>{{.FirstTerm}}</p>
+    <p id="operator"><input type="hidden" name="operator" value="{{.Operator}}"/>{{.Operator}}</p>
+    <p class="term"><input type="hidden" name="secondTerm" value="{{.SecondTerm}}"/>{{.SecondTerm}}</p>
 </section>
 {{end}}

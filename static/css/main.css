@@ -1,16 +1,32 @@
 @import url("/static/css/normalize.css");
 @import url("/static/css/_nav.css");
 @import url("/static/css/_options.css");
-@import url("/static/css/_equation.css");
-@import url("/static/css/_answer.css");
-
+@import url("/static/css/_flashcard.css");
+@font-face {
+    font-family: Catboo;
+    src: url(../Catboo.ttf) format('truetype');
+}
 :root {
     --digitWidth: 6ch;
-    --bgColor: white;
-    --fontColor: #222222;
-    --smallFontColor: white;
-    --mobileFontColor: white;
     --font: 'Noto Serif', serif;
+}
+@media (prefers-color-scheme: light) {
+    :root {
+        --bgColor: white;
+        --fontColor:#222222;
+        --bgOverlay: rgba(255,255,255,0.7);
+        --smallFontColor: white;
+        --mobileFontColor: white;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bgColor: black;
+        --fontColor: white;
+        --bgOverlay: rgba(0,0,0,0.7);
+        --smallFontColor: grey;
+        --mobileFontColor: grey;
+    }
 }
 
 html {
@@ -30,10 +46,10 @@ body {
 
 body::before {
     content: "";
-    background: rgba(0,0,0,0.3);
+    background: var(--bgOverlay);
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: -1;
 }
 
@@ -41,16 +57,4 @@ main {
     display: flex;
     justify-content: center;
     flex-direction: column;
-}
-
-#flash-card {
-    margin: 0;
-    align-self: center;
-    padding: 5rem 5rem 0 5rem;
-    background-color: white;
-    box-shadow: 17px 17px 10px 5px rgba(0,0,0,0.5);
-    position: relative;
-    border-radius: 20px;
-    width: calc(var(--digitWidth) + 10rem);
-    font-size: 3rem;
 }

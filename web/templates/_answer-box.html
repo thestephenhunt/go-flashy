@@ -1,6 +1,5 @@
 {{define "_answer-box"}}
-<form hx-post="/answer" hx-target="#answer-button" hx-swap="outerHTML" id="answer-box">
-    <input type="text" name="answer" hx-post="/check-answer" hx-trigger="keyup" hx-swap="none"/>
+    <input type="text" name="answer" />
     {{template "_button"}}
 </form>
 {{end}}

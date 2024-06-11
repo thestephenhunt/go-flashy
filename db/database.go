@@ -2,105 +2,179 @@ package database
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
-	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/thestephenhunt/go-server/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Session struct {
-	Username string
-	Expiry   time.Time
-}
+var Data *sql.DB
 
-var Sessions = map[string]Session{}
-
-var Database *sql.DB
-
-func LoginUser(w http.ResponseWriter, r *http.Request) (*models.User, error) {
-	creds := &models.User{}
-	creds.Username = r.FormValue("username")
-	creds.Password = r.FormValue("password")
-
-	result := Database.QueryRow(`SELECT name, username, pw FROM users WHERE username = ?`, creds.Username)
+func getUser(u *models.User) (*models.User, error) {
+	result := Data.QueryRow(`SELECT name, username, pw, logged FROM users WHERE username = ?`, u.Username)
 
 	storedCreds := &models.User{}
-	err := result.Scan(&storedCreds.Name, &storedCreds.Username, &storedCreds.Password)
+	err := result.Scan(&storedCreds.Name, &storedCreds.Username, &storedCreds.Password, &storedCreds.Logged)
+
 	if err != nil {
 		if err == sql.ErrNoRows {
-			w.WriteHeader(http.StatusUnauthorized)
 			return nil, err
 		}
-
-		w.WriteHeader(http.StatusInternalServerError)
 		return nil, err
 	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(storedCreds.Password), []byte(creds.Password))
-
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return nil, err
-	}
-
-	sessionToken := uuid.NewString()
-	expiresAt := time.Now().Add(60 * time.Second)
-
-	Sessions[sessionToken] = Session{
-		Username: storedCreds.Username,
-		Expiry:   expiresAt,
-	}
-
-	http.SetCookie(w, &http.Cookie{
-		Name:    "flashy_token",
-		Value:   sessionToken,
-		Expires: expiresAt,
-	})
 
 	return storedCreds, nil
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
-	log.Println("TRYING TO CREATE")
-	creds := &models.User{}
-	creds.Name = r.FormValue("name")
-	creds.Username = r.FormValue("username")
-	creds.Password = r.FormValue("password")
-
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(creds.Password), 10)
-
-	stmt, err := Database.Exec(`INSERT INTO users(name, username, pw)VALUES(?,?,?)`, creds.Name, creds.Username, string(hashedPassword))
+func FindUserByUsername(username string) (*models.User, error) {
+	query, _ := Data.Prepare(`SELECT name, username, pw, logged FROM users WHERE username = ?`)
+	storedCreds := &models.User{}
+	result := query.QueryRow(username)
+	err := result.Scan(&storedCreds.Name, &storedCreds.Username, &storedCreds.Password, &storedCreds.Logged)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		if err == sql.ErrNoRows {
+			log.Println(err)
+			return nil, err
+		}
 		log.Println(err)
-		return
+		return nil, err
 	}
-	log.Println(stmt)
-	log.Println("Inserted")
+	return storedCreds, nil
+}
 
-	//return name, logged
+func LoginUser(u *models.User) (*models.User, error) {
+	foundUser, err := getUser(u)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	if !foundUser.Logged {
+		err = bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(u.Password))
+		if err != nil {
+			return nil, err
+		}
+		loggedIn := AddSession(foundUser)
+		return loggedIn, nil
+	}
 
+	return foundUser, nil
+}
+
+func LogoutUser(username string) (*models.User, error) {
+	log.Println("LOGGING OUT USER")
+	currentUser, err := FindUserByUsername(username)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	updateQuery, _ := Data.Prepare(`UPDATE users SET logged = FALSE WHERE username = ? RETURNING name, username, pw, logged`)
+	loggedOut := updateQuery.QueryRow(currentUser.Username)
+
+	err = loggedOut.Scan(&currentUser.Name, &currentUser.Username, &currentUser.Password, &currentUser.Logged)
+	if err != nil {
+		log.Println(err)
+	}
+	return currentUser, nil
+}
+
+func CreateUser(u *models.User) (*models.User, error) {
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(u.Password), 10)
+
+	query, _ := Data.Prepare(`INSERT INTO users(name, username, pw, logged) VALUES (?,?,?,?)`)
+	_, err := query.Exec(u.Name, u.Username, string(hashedPassword), 1)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	foundUser, err := getUser(u)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return foundUser, nil
+}
+
+func AddSession(u *models.User) *models.User {
+	log.Println("ADDING SESSION")
+	queryStatement, _ := Data.Prepare(`UPDATE users SET logged = TRUE WHERE username = ? RETURNING name, username, pw, logged`)
+	query := queryStatement.QueryRow(u.Username)
+
+	err := query.Scan(&u.Name, &u.Username, &u.Password, &u.Logged)
+	if err != nil {
+		log.Println(err)
+	}
+	return u
+}
+
+func DeleteSession(s *models.Session) {
+	_, err := Data.Exec(`DELETE FROM sessions WHERE sid = ?`, s.Sid)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func UpdateSession(s *models.Session) {
+	log.Println("UPDATING SESSION DB")
+	stateJson, err := json.Marshal(s.State)
+	if err != nil {
+		log.Println(err)
+	}
+	nextJson, err := json.Marshal(s.Next)
+	if err != nil {
+		log.Println(err)
+	}
+
+	queryStatement := `UPDATE sessions SET timeAccessed = ?, state = ?, expiresAt = ?, next = ? WHERE sid = ?`
+
+	query, _ := Data.Prepare(queryStatement)
+	_, err = query.Exec(s.TimeAccessed, stateJson, s.ExpiresAt, nextJson, s.Sid)
+	log.Println("RAN DB UPDATE")
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func GetSession(sid string) (*models.Session, error) {
+	result := Data.QueryRow(`SELECT sid, user, timeAccessed, state, expiresAt, next FROM sessions WHERE sid = ?`, sid)
+
+	var state, next []byte
+	var expires string
+	storedCreds := &models.Session{}
+	err := result.Scan(&storedCreds.Sid, &storedCreds.User, &storedCreds.TimeAccessed, &state, &expires, &next)
+	json.Unmarshal([]byte(state), &storedCreds.State)
+	json.Unmarshal([]byte(next), &storedCreds.Next)
+	storedCreds.ExpiresAt, _ = time.Parse(time.RFC3339, expires)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		log.Println("THIS ERROR")
+		return nil, err
+	}
+	return storedCreds, nil
 }
 
 func DbInit() error {
 	var err error
 
-	Database, err = sql.Open("sqlite3", "db/data.db")
+	Data, err = sql.Open("sqlite3", "db/data.db")
+
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(Database)
 
-	stmt, err := Database.Prepare(
+	dataStmt, err := Data.Prepare(
 		`CREATE TABLE IF NOT EXISTS users (
 			id INTEGER PRIMARY KEY,
 			name TEXT NOT NULL,
 			username TEXT NOT NULL,
 			pw TEXT,
+			logged BOOLEAN, 
 			created DATETIME DEFAULT CURRENT_TIMESTAMP
 		)`)
 	if err != nil {
@@ -108,11 +182,23 @@ func DbInit() error {
 	} else {
 		log.Println("Successfully created table USERS")
 	}
-	stmt.Exec()
+	dataStmt.Exec()
 
-	return Database.Ping()
-}
+	sessStmt, err := Data.Prepare(
+		`CREATE TABLE IF NOT EXISTS sessions (
+			sid TEXT PRIMARY KEY,
+			user TEXT,
+			timeAccessed DATETIME NOT NULL,
+			state JSON,
+			expiresAt INTEGER,
+			next JSON
+		)`)
+	if err != nil {
+		log.Println("Error in creating table SESSIONS")
+	} else {
+		log.Println("Successfully created table SESSIONS")
+	}
+	sessStmt.Exec()
 
-func (s Session) IsExpired() bool {
-	return s.Expiry.Before(time.Now())
+	return Data.Ping()
 }

@@ -22,19 +22,24 @@
         transform-origin: top left;
         border-radius: 0 0 20px 20px;
         box-shadow: 4px 6px 4px 1px rgba(0,0,0,0.5);
+        color: var(--fontColor);
+        cursor: pointer;
     }
     fieldset {
         font-size: 2.5rem;
         border: none;
     }
-    legend {
+    h4 {
         color: var(--fontColor);
-        padding: 1rem;
         font-weight: 600;
+        margin: 0;
     }
     label {
         padding-right: 1rem;
         font-size: 2rem;
+    }
+    .option-item {
+        margin: 1rem 0;
     }
     .select-wrapper {
         position: relative;
@@ -61,5 +66,7 @@
     }
     #newEqButton {
         display: block;
+        font-size: 2rem;
+        color: var(--fontColor);
     }
 }

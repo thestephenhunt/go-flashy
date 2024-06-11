@@ -1,12 +1,16 @@
 {{define "_nav"}}
+<a href="#" id="nav-menu-toggle" onclick="openNavMenu()">
+    <img src="/static/images/hamburger.svg" alt="Navigation drawer toggle" aria-controls="nav-menu" aria-expanded="false"/>
+</a>
 <nav id="nav-menu">
-    <a href="#nav-menu-toggle" id="nav-menu-close">
+    <a href="#" id="nav-menu-close" onclick="openNavMenu()">
         <img src="/static/images/close.svg" alt="Navigation drawer toggle" aria-controls="nav-menu" aria-expanded="false"/>
     </a>
     <ul>
-        <li><a href="">Addition</a></li>
-        <li><a href="">Subtraction</a></li>
-        <li><a href="">Multiplication</a></li>
+        <li><a href="" hx-post="/new-equation" hx-include="this" hx-target="#flash-card" hx-swap="outerHTML" hx-on:htmx:config-request="event.detail.parameters['digits'] = sessionStorage.getItem('Digits')"><input type="hidden" name="operator" value="+"/>Addition</a></li>
+        <li><a href="" hx-post="/new-equation" hx-include="this" hx-target="#flash-card" hx-swap="outerHTML" hx-on:htmx:config-request="event.detail.parameters['digits'] = sessionStorage.getItem('Digits')"><input type="hidden" name="operator" value="-"/>Subtraction</a></li>
+        <li><a href="" hx-post="/new-equation" hx-include="this" hx-target="#flash-card" hx-swap="outerHTML" hx-on:htmx:config-request="event.detail.parameters['digits'] = sessionStorage.getItem('Digits')"><input type="hidden" name="operator" value="*"/>Multiplication</a></li>
     </ul>
+    {{template "_login" .}}
 </nav>
 {{end}}

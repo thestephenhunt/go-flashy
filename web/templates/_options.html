@@ -2,24 +2,26 @@
 <aside id="options-menu">
     <h3 id="options-tab" onclick="openOptMenu()">Options</h3>
     <fieldset>
-        <legend>Equation Options</legend>
-        <label for="digits">How many digits?</label>
-        <div class="select-wrapper">
-            <select name="digits" id="digits">
-                <option value=""></option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-            </select>
+        <h4>Equation Options</h4>
+        <div class="option-item">
+            <label for="digits">How many digits?</label>
+            <div class="select-wrapper">
+                <select name="digits" id="digits" hx-post="/new-equation" hx-target="#flash-card" hx-swap="outerHTML" hx-on:htmx:config-request="event.detail.parameters['operator'] = sessionStorage.getItem('Operator')">
+                    <option value=""></option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
         </div>
-        <button id="newEqButton">New Equation</button>
+        <button id="newEqButton" hx-get="/new-equation" hx-target="#flash-card" hx-swap="outerHTML">New Equation</button>
     </fieldset>
 </aside>
 {{end}}

@@ -1,10 +1,12 @@
 {{define "_login"}}
-<div id="login-container">
-    {{template "login-button" .User}}
+<div id="login-container" class="" hx-ext="response-targets">
+    {{template "login-button" .}}
     <div id="user-menu">
-    {{if not .LoggedIn}}
+    {{if not .Logged}}
         <a href="" hx-get="/go-login" hx-target="#user-menu">Login</a>
         <a href="" hx-get="/go-register" hx-target="#user-menu">Register</a>
+    {{ else }}
+        <a href="" hx-get="/logout" hx-target="#login-container" hx-swap="outerHTML">Logout</a>
     {{end}}
     </div>
 </div>
@@ -12,14 +14,14 @@
 
 {{define "login-button"}}
     {{if .Logged}}
-    <a href="#" role="button" class="user-menu-button" onclick="openUserMenu()">Hey, {{.Name}}</a>
+    <a href="#" role="button" class="user-menu-button" onclick="openUserMenu()">Hey, {{.Username}}</a>
     {{else}}
     <a href="#" role="button" class="user-menu-button" onclick="openUserMenu()">Login/Register</a>
     {{end}}
 {{end}}
 
 {{define "login-form"}}
-<form class="login-form" hx-post="/login" hx-target="#login-container" hx-swap="outerHTML">
+<form id="login-form" hx-post="/login" hx-target="#login-container" hx-target-404="#error-msg" hx-swap="outerHTML">
     <label>
         User:
         <input name="username" type="text" />
@@ -28,7 +30,8 @@
         Password:
         <input name="password" type="password" />
     </label>
-    <button type="submit">Login</button>
+    <button type="submit" hx-on::after-request="updateUser()">Login</button>
+    <span id="error-msg"></span>
 </form>
 <a href="" hx-get="/go-register" hx-target="#user-menu">Register</a>
 {{end}}

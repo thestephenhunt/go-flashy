@@ -1,85 +1,74 @@
 package middleware
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	database "github.com/thestephenhunt/go-server/db"
+	"github.com/thestephenhunt/go-server/internal/users"
+	"github.com/thestephenhunt/go-server/models"
 )
 
-type Middleware func(http.Handler) http.Handler
+type Middleware func(http.HandlerFunc) http.HandlerFunc
 
-type wrappedResponseWriter struct {
-	http.ResponseWriter
-	statusCode int
+func Chain(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
+	for _, m := range middlewares {
+		f = m(f)
+	}
+	return f
 }
 
-func (w *wrappedResponseWriter) WriteHeader(statusCode int) {
-	w.ResponseWriter.WriteHeader(statusCode)
-	w.statusCode = statusCode
-}
+func SessionMiddleware() Middleware {
 
-func MiddlewareStack(ms ...Middleware) Middleware {
-	return Middleware(func(next http.Handler) http.Handler {
-		for i := len(ms) - 1; i >= 0; i-- {
-			m := ms[i]
-			next = m(next)
+	return func(f http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			log.Println("ATTEMPTING TO REFRESH")
+			var ctx context.Context
+			key := models.CtxKey("user")
+			c, err := r.Cookie("flashy_token")
+			if err != nil {
+				log.Println(err)
+				http.SetCookie(w, &http.Cookie{
+					Name:    "flashy_token",
+					Value:   "",
+					Expires: time.Now().AddDate(0, 0, -1),
+					MaxAge:  -1,
+				})
+				ctx = context.WithValue(r.Context(), key, "guest")
+				newReq := r.Clone(ctx)
+				f(w, newReq)
+				return
+			}
+
+			token := c.Value
+			tkn, err := users.CheckJwt(token)
+			log.Printf("REFRESH RESULT: %s, %v", tkn, err)
+			if err != nil {
+				database.LogoutUser(tkn)
+				http.SetCookie(w, &http.Cookie{
+					Name:    "flashy_token",
+					Value:   "",
+					Expires: time.Now().AddDate(0, 0, -1),
+					MaxAge:  -1,
+				})
+				ctx = context.WithValue(r.Context(), key, "guest")
+				newReq := r.Clone(ctx)
+				f(w, newReq)
+			}
+
+			if tkn != "" {
+				newToken := users.NewJwt(tkn)
+				http.SetCookie(w, &http.Cookie{
+					Name:   "flashy_token",
+					Value:  newToken,
+					MaxAge: 0,
+				})
+				ctx = context.WithValue(r.Context(), key, tkn)
+				newReq := r.Clone(ctx)
+				f(w, newReq)
+			}
 		}
-		return next
-	})
-}
-
-func RefreshCookie(next http.Handler) http.Handler {
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("ATTEMPTING TO REFRESH")
-		wrapped := &wrappedResponseWriter{
-			ResponseWriter: w,
-			statusCode:     http.StatusOK,
-		}
-		c, err := r.Cookie("flashy_token")
-		if err != nil {
-			log.Println("No cookie")
-			wrapped.statusCode = http.StatusUnauthorized
-			next.ServeHTTP(wrapped, r)
-			return
-		}
-		sessionToken := c.Value
-		// Check if there is a current session for the user
-		userSession, exists := database.Sessions[sessionToken]
-		if !exists {
-			log.Println("Not in a session")
-
-			next.ServeHTTP(wrapped, r)
-			return
-		}
-		if userSession.IsExpired() {
-			delete(database.Sessions, sessionToken)
-			log.Println("Expired - unauthorized")
-			wrapped.statusCode = http.StatusUnauthorized
-			next.ServeHTTP(wrapped, r)
-			return
-		}
-
-		newSessionToken := uuid.NewString()
-		expiresAt := time.Now().Add(60 * time.Second)
-
-		// Setup a session for the user
-		database.Sessions[newSessionToken] = database.Session{
-			Username: userSession.Username,
-			Expiry:   expiresAt,
-		}
-		// Remove old session
-		delete(database.Sessions, sessionToken)
-
-		http.SetCookie(w, &http.Cookie{
-			Name:    "flashy_token",
-			Value:   newSessionToken,
-			Expires: time.Now().Add(60 * time.Second),
-		})
-		log.Println(wrapped)
-		next.ServeHTTP(wrapped, r)
-	})
+	}
 }
