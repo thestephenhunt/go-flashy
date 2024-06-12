@@ -19,6 +19,6 @@ jobs:
             server: ${{ secrets.HOST }}
             port: ${{ secrets.PORT }}
             local_path: './'
-            remote_path: '/'
+            remote_path: '/docker'
             sftp_only: true
             password: ${{ secrets.PASSWORD }}
