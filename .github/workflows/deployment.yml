@@ -14,7 +14,8 @@ jobs:
       - name: 📂 SFTP uploader                       
         uses: wangyucode/sftp-upload-action@v2.0.2
         with:
-          host: ${{ secrets.HOST }}                  # Recommended to put the credentials in github secrets.
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
           compress: true                             # Compression
