@@ -6,7 +6,7 @@ WORKDIR /go-server
 COPY . .
 RUN go mod download && go mod verify
 RUN go mod tidy
-RUN GOOS=linux go build -ldflags="-s -w" -o ./bin/go-server ./main.go
+RUN GOOS=linux go build -o ./bin/go-server ./main.go
 
 FROM alpine:3.17
 RUN apk --no-cache add ca-certificates
