@@ -19,6 +19,11 @@ htmx.on("htmx:load", function(e) {
     }
 })
 
+function AddEquationParams(e) {
+    e.detail.parameters['operator'] = sessionStorage.getItem('Operator')
+    e.detail.parameters['digits'] = sessionStorage.getItem('Digits')
+}
+
 window.onload = function() {
     let eventSource = new EventSource("/events")
     eventSource.onopen = (e) => {

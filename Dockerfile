@@ -1,12 +1,16 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.22
+FROM golang:alpine AS build
+RUN apk --no-cache add gcc g++ make git
 WORKDIR /go-server
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
-
 COPY . .
-RUN go install -v ./... && go build
+RUN go mod download && go mod verify
+RUN go mod tidy
+RUN GOOS=linux go build -ldflags="-s -w" -o ./bin/go-server ./main.go
 
-CMD ["./go-server"]
-EXPOSE 8000
+FROM alpine:3.17
+RUN apk --no-cache add ca-certificates
+WORKDIR /usr/bin
+COPY --from=build /go-server /go/bin
+EXPOSE 80
+ENTRYPOINT /go/bin/go-server --port 80

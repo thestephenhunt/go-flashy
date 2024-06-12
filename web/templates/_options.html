@@ -21,7 +21,7 @@
                 </select>
             </div>
         </div>
-        <button id="newEqButton" hx-get="/new-equation" hx-target="#flash-card" hx-swap="outerHTML">New Equation</button>
+        <button id="newEqButton" hx-post="/new-equation" hx-target="#flash-card" hx-swap="outerHTML" hx-on:htmx:config-request="AddEquationParams(event)">New Equation</button>
     </fieldset>
 </aside>
 {{end}}
