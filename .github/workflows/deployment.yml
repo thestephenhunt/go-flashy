@@ -4,23 +4,21 @@ on:
   workflow_run:
     workflows: [Build and test]
     types: [completed]
-jobs:
-  sftp_transfer_job:
-    runs-on: ubuntu-latest
-    name: SFTP Transfer Test
-    steps:
-    - uses: actions/checkout@v2
-   
-    - name: Connect
-      id: connect
-      uses: danhendrickson/sftp-transfer-action@v1.23
-      with:
-        server: ${{ secrets.HOST }}
-        user: ${{ secrets.USER }}
-        pass: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        local-path: '.'
-        remote-path: '/'
 
-    - name: Transfer Status
-      run: echo "Transfer Status - ${{ steps.connect.outputs.transferStatus }}"
+jobs:
+  deploy_job:
+    runs-on: ubuntu-latest
+    name: deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy file
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+            username: ${{ secrets.USER }}
+            server: ${{ secrets.HOST }}
+            port: ${{ secrets.PORT }}
+            local_path: './'
+            remote_path: '/docker'
+            sftp_only: true
+            password: ${{ secrets.PASSWORD }}
