@@ -5,21 +5,22 @@ on:
     workflows: [Build and test]
     types: [completed]
 jobs:
-  Upload-to-SFTP:
+  sftp_transfer_job:
     runs-on: ubuntu-latest
+    name: SFTP Transfer Test
     steps:
-      - name: 🚚 Get latest code                    
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+   
+    - name: Connect
+      id: connect
+      uses: danhendrickson/sftp-transfer-action@v1.23
+      with:
+        server: ${{ secrets.HOST }}
+        user: ${{ secrets.USER }}
+        pass: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        local-path: '.'
+        remote-path: '/'
 
-      - name: 📂 SFTP uploader                       
-        uses: wangyucode/sftp-upload-action@v2.0.2
-        with:
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
-          compress: true                             # Compression
-          forceUpload: true                          # Optional, Force uploading all files, Default to false(upload only newer files).
-          localDir: '.'                              # Required, Absolute or relative to cwd.
-          remoteDir: '/'                             # Required, Absolute path only.
-          exclude: '.git*,.DS_Store'  
+    - name: Transfer Status
+      run: echo "Transfer Status - ${{ steps.connect.outputs.transferStatus }}"
