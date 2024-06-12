@@ -1,18 +1,21 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "prod" ]
-  pull_request:
-    branches: [ "prod" ]
+  workflow_run:
+    workflows: [Build and test]
+    types: [completed]
 
 jobs:
-
-  build:
-
+  on-success:
     runs-on: ubuntu-latest
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag flashy-image:$(date +%s)
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build . --file Dockerfile --tag flashy-image:$(date +%s)
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - name: Build failed
+        run: echo 'Build failed'
