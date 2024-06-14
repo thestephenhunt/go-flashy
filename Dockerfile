@@ -2,15 +2,16 @@
 
 FROM golang:alpine AS build
 RUN apk --no-cache add gcc g++ make git
-WORKDIR /go-server
+WORKDIR /go/src/app
 COPY . .
-RUN go mod download && go mod verify
+RUN go mod download
+RUN go mod verify
 RUN go mod tidy
-RUN GOOS=linux go build -v -o ./bin/go-server .
+RUN GOOS=linux go build -ldflags="-s -w" -v -o ./go-server .
 
-FROM alpine:3.17
+FROM alpine:latest
 RUN apk --no-cache add ca-certificates
-WORKDIR /usr/bin
-COPY --from=build /go-server /go/bin
+WORKDIR /go
+COPY --from=build /go/src/app /go
 EXPOSE 80
-ENTRYPOINT ./bin/go-server --port 80
+ENTRYPOINT /go/go-server --port 80
