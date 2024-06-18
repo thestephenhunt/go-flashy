@@ -6,13 +6,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-    ports:
-      - "8000:8000"
+      no_cache: true
     environment:
       - VIRTUAL_HOST=/run/secrets/virtual
       - LETSENCRYPT_HOST=/run/secrets/letsencrypt
       - TOKEN=/run/secrets/token
-      - COMPOSE_REMOVE_ORPHANS=1
     secrets:
       - virtual
       - letsencrypt
