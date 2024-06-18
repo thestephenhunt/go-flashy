@@ -16,7 +16,6 @@ services:
       - virtual
       - letsencrypt
       - token
-      - port
 secrets:
   virtual:
     file: ./secrets/virtual_host.txt
