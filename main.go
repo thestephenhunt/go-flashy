@@ -39,5 +39,5 @@ func main() {
 	mux.Handle("/events", Bro)
 	mux.Handle("/static/", http.StripPrefix("/static", fs))
 
-	log.Fatal(http.ListenAndServe(":80", mux))
+	log.Fatal(http.ListenAndServe(":8000", mux))
 }

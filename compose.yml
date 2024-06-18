@@ -9,12 +9,14 @@ services:
       no_cache: true
     environment:
       - VIRTUAL_HOST=/run/secrets/virtual
+      - VIRTUAL_PORT=8000
       - LETSENCRYPT_HOST=/run/secrets/letsencrypt
       - TOKEN=/run/secrets/token
     secrets:
       - virtual
       - letsencrypt
       - token
+      - port
 secrets:
   virtual:
     file: ./secrets/virtual_host.txt
