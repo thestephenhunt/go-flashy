@@ -3,19 +3,18 @@ include:
 services:
   server:
     restart: unless-stopped
-    build:
-      dockerfile: Dockerfile
-      context: .
-      no_cache: true
+    image: thestephenhunt/flashy
     environment:
-      - VIRTUAL_HOST=/run/secrets/virtual
-      - VIRTUAL_PORT=8000
-      - LETSENCRYPT_HOST=/run/secrets/letsencrypt
-      - TOKEN=/run/secrets/token
+      VIRTUAL_HOST: /run/secrets/virtual
+      VIRTUAL_PORT: 8000
+      LETSENCRYPT_HOST: /run/secrets/letsencrypt
+      LETSENCRYPT_EMAIL: /run/secrets/letsencrypt_email
+      TOKEN: /run/secrets/token
     secrets:
-      - virtual
-      - letsencrypt
-      - token
+      - "virtual"
+      - "letsencrypt"
+      - "token"
+      - "letsencrypt_email"
 secrets:
   virtual:
     file: ./secrets/virtual_host.txt
@@ -23,3 +22,5 @@ secrets:
     file: ./secrets/letsencrypt_host.txt
   token:
     file: ./secrets/token.txt
+  letsencrypt_email:
+    file: ./secrets/letsencrypt_email.txt
