@@ -14,4 +14,4 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /go
 COPY --from=build /go/src/app /go
 EXPOSE 8000
-ENTRYPOINT /go/go-server --port 80
+ENTRYPOINT /go/go-server --port 8000
