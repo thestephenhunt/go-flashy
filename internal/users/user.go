@@ -13,16 +13,13 @@ import (
 )
 
 func NewJwt(u string) string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Error loading .env file")
-	}
 	claims := jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(5 * time.Minute)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		Subject:   u,
 	}
-	secretKey := []byte(os.Getenv("SECRET"))
+	tokenSecret := os.Getenv("token")
+	secretKey := []byte(tokenSecret)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	s, err := token.SignedString(secretKey)
 	if err != nil {
