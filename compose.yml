@@ -1,3 +1,5 @@
+include:
+  - nginx-proxy-compose.yaml
 services:
   server:
     restart: unless-stopped
