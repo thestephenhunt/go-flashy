@@ -1,5 +1,3 @@
-name: flashy
-
 services:
   server:
     restart: no
