@@ -27,5 +27,5 @@ jobs:
       - name: Deploy docker container webhook
         uses: joelwmale/webhook-action@master
         env:
-          WEBHOOK_URL: http://${{ secrets.SSH_HOST }}:${{ secrets.SSH_PORT }}/hooks/redeploy
+          WEBHOOK_URL: http://${{ secrets.SSH_HOST }}:${{ secrets.WEBHOOK_PORT }}/hooks/redeploy
           data: ""
