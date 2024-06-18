@@ -32,4 +32,4 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd ~/docker;docker stop flashy-go-flashy-1;docker rm flashy-go-flashy-1;docker pull thestephenhunt/flashy:latest;docker-compose up -d
+            cd ~/docker;docker stop docker-server-1;docker rm docker-server-1;docker pull thestephenhunt/flashy:latest;docker-compose up -d
