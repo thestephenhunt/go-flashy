@@ -24,8 +24,12 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: thestephenhunt/flashy:latest
-      - name: Deploy docker container webhook
-        uses: joelwmale/webhook-action@master
-        env:
-          WEBHOOK_URL: http://${{ secrets.SSH_HOST }}:${{ secrets.WEBHOOK_PORT }}/hooks/redeploy-flashy
-          data: ""
+      - name: Deploy using ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ~/docker;docker stop flashy-go-flashy-1;docker rm flashy-go-flashy-1;docker pull thestephenhunt/flashy:latest;docker-compose up -d
