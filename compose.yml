@@ -1,6 +1,6 @@
 services:
   server:
-    restart: no
+    restart: unless-stopped
     build:
       dockerfile: Dockerfile
       context: .
