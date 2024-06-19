@@ -72,4 +72,18 @@ window.onload = function() {
             sessionStorage.setItem(key, incData[key])
         }
     }
+
+    initialScreenSize = screen.height,
+    intId = window.setInterval(function(){
+        if (initialScreenSize !== screen.height) {
+            document.getElementById('body').classList.add('kbactive')
+        } else {
+            document.getElementById('body').classList.remove('kbactive')
+        }
+    },500)
+
+    const answerBox = document.getElementById('answer-input')
+    answerBox.addEventListener("focus", (e) => {
+        answerBox.scrollIntoView({ behavior: "smooth", block: "end"})
+    })
 }
