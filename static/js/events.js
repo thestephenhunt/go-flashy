@@ -54,7 +54,6 @@ htmx.on("htmx:beforeSwap", function(e) {
 function UpdateDigits(e) {
     sessionStorage.setItem('Digits', e.detail.parameters['digits'])
     e.detail.parameters['operator'] = sessionStorage.getItem('Operator')
-    console.log(e)
 }
 
 function AddEquationParams(e) {
@@ -68,7 +67,6 @@ window.onload = function() {
         console.log("OPENED")
     }
     eventSource.onmessage = (e) => {
-        console.log(e.data)
         let incData = JSON.parse(e.data)
         for (const key in incData) {
             sessionStorage.setItem(key, incData[key])

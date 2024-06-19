@@ -84,7 +84,6 @@ func LoginUser(r *http.Request) (*models.User, error) {
 }
 
 func LogoutUser(r *http.Request) (*models.User, error) {
-	log.Println("LOGGING OUT IN USERS")
 	c, err := r.Cookie("flashy_token")
 	if err != nil {
 		if err == http.ErrNoCookie {

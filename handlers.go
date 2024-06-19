@@ -154,7 +154,7 @@ func NewEquationHandler(w http.ResponseWriter, r *http.Request) {
 		Operator:   operator,
 	}
 	tmpl.ExecuteTemplate(w, "_flash-card", state)
-	timer := time.NewTimer(100 * time.Millisecond)
+	timer := time.NewTimer(200 * time.Millisecond)
 	go func() {
 		<-timer.C
 		stringState, err := json.Marshal(state)
