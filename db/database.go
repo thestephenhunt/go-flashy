@@ -64,7 +64,6 @@ func LoginUser(u *models.User) (*models.User, error) {
 }
 
 func LogoutUser(username string) (*models.User, error) {
-	log.Println("LOGGING OUT USER")
 	currentUser, err := FindUserByUsername(username)
 	if err != nil {
 		log.Println(err)
@@ -100,7 +99,6 @@ func CreateUser(u *models.User) (*models.User, error) {
 }
 
 func AddSession(u *models.User) *models.User {
-	log.Println("ADDING SESSION")
 	queryStatement, _ := Data.Prepare(`UPDATE users SET logged = TRUE WHERE username = ? RETURNING name, username, pw, logged`)
 	query := queryStatement.QueryRow(u.Username)
 
@@ -119,7 +117,6 @@ func DeleteSession(s *models.Session) {
 }
 
 func UpdateSession(s *models.Session) {
-	log.Println("UPDATING SESSION DB")
 	stateJson, err := json.Marshal(s.State)
 	if err != nil {
 		log.Println(err)
@@ -133,7 +130,6 @@ func UpdateSession(s *models.Session) {
 
 	query, _ := Data.Prepare(queryStatement)
 	_, err = query.Exec(s.TimeAccessed, stateJson, s.ExpiresAt, nextJson, s.Sid)
-	log.Println("RAN DB UPDATE")
 	if err != nil {
 		log.Println(err)
 	}
@@ -153,7 +149,6 @@ func GetSession(sid string) (*models.Session, error) {
 		if err == sql.ErrNoRows {
 			return nil, err
 		}
-		log.Println("THIS ERROR")
 		return nil, err
 	}
 	return storedCreds, nil

@@ -6,7 +6,7 @@
         <div class="option-item">
             <label for="digits">How many digits?</label>
             <div class="select-wrapper">
-                <select name="digits" id="digits" hx-post="/new-equation" hx-target="#flash-card" hx-swap="outerHTML" hx-on:htmx:config-request="event.detail.parameters['operator'] = sessionStorage.getItem('Operator')">
+                <select name="digits" id="digits" hx-post="/new-equation" hx-target="#flash-card" hx-swap="outerHTML" hx-on:htmx:config-request="UpdateDigits(event)">
                     <option value=""></option>
                     <option value="1">1</option>
                     <option value="2">2</option>

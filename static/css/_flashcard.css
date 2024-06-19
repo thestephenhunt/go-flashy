@@ -8,25 +8,22 @@
     border-radius: 20px;
     width: calc(var(--digitWidth) + 10rem);
     font-size: 3rem;
+    font-family: var(--eqFont);
 
     @media (min-resolution: 150dpi) and (max-width: 450px) {
-        padding: 3rem 3rem 0 3rem;
-        width: calc(var(--digitWidth) + 7rem);
+        padding: 3rem 12.5% 0 12.5%;
+        width: 75%;
     }
 
     #equation {
-        font-size: 6rem;
+        font-size: var(--varFontSize);
         display: flex;
-        width: var(--digitWidth);
+        width: 100%;
         flex-wrap: wrap;
         justify-content: space-between;
         border-bottom: 3px solid var(--fontColor);
         letter-spacing: 2px;
         color: var(--fontColor);
-
-        @media (min-resolution: 150dpi) {
-            font-size: 5rem;
-        }
     
         p {
             margin: 0;
@@ -48,11 +45,12 @@
         position: relative;
         padding-bottom: 5rem;
         width: 100%;
+        container: equation / inline-size;
     
         input {
             unicode-bidi: bidi-override;
             direction: rtl;
-            font-size: 5.5rem;
+            font-size: var(--varFontSize);
             width: 100%;
             letter-spacing: 2px;
             padding: 0;
@@ -60,15 +58,10 @@
             border-bottom: 1px solid var(--fontColor);
             border-width: 0 0 1px 0;
             outline: 0;
-            font-family: var(--font);
+            font-family: var(--eqFont);
             background-color: var(--bgColor);
             color: var(--fontColor);
             caret-color: var(--fontColor);
-
-            @media (min-resolution: 150dpi) and (max-width: 450px) {
-                font-size: 5rem;
-                width: var(--digitWidth);
-            }
         }
     }
     
@@ -81,5 +74,6 @@
         color: white;
         border: none;
         cursor: pointer;
+        font-family: var(--font);
     }
 }

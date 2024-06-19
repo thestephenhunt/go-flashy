@@ -9,6 +9,8 @@
 :root {
     --digitWidth: 6ch;
     --font: 'Noto Serif', serif;
+    --eqFont: 'Roboto Mono';
+    --varFontSize: 5rem;
 }
 @media (prefers-color-scheme: light) {
     :root {
@@ -35,7 +37,7 @@ html {
 }
 
 body {
-    font-family: 'Noto Serif', serif;
+    font-family: var(--font);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     width: 100vw;

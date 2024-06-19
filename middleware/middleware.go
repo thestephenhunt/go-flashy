@@ -24,7 +24,6 @@ func SessionMiddleware() Middleware {
 
 	return func(f http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			log.Println("ATTEMPTING TO REFRESH")
 			var ctx context.Context
 			key := models.CtxKey("user")
 			c, err := r.Cookie("flashy_token")
@@ -44,7 +43,6 @@ func SessionMiddleware() Middleware {
 
 			token := c.Value
 			tkn, err := users.CheckJwt(token)
-			log.Printf("REFRESH RESULT: %s, %v", tkn, err)
 			if err != nil {
 				database.LogoutUser(tkn)
 				http.SetCookie(w, &http.Cookie{

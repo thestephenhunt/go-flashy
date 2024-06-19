@@ -18,7 +18,7 @@ var tmpl = template.Must(template.ParseGlob("web/templates/*"))
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value(models.CtxKey("user"))
-	log.Println(user)
+
 	var state models.SessionState
 
 	if user == "guest" {
@@ -85,7 +85,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Value:  newToken,
 		MaxAge: 0,
 	})
-	log.Println(loggedUser)
+
 	tmpl.ExecuteTemplate(w, "_login", loggedUser)
 }
 
@@ -114,14 +114,11 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		Value:  "",
 		MaxAge: -1,
 	})
-	log.Println(userExit.Logged)
+
 	tmpl.ExecuteTemplate(w, "_login", userExit)
 }
 
 func AnswerHandler(w http.ResponseWriter, r *http.Request) {
-
-	log.Println("ANSWER")
-	log.Println(r)
 	firstTerm, err := strconv.Atoi(r.FormValue("firstTerm"))
 	if err != nil {
 		return
@@ -132,20 +129,15 @@ func AnswerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	answer, err := strconv.Atoi(utils.ReverseString(r.FormValue("answer")))
-	log.Println(answer)
+
 	if err != nil {
 		return
 	}
 	if utils.Solve(firstTerm, secondTerm, operator) == answer {
-		log.Println("true")
-		log.Println(operator)
 		tmpl.ExecuteTemplate(w, "good_job", nil)
 	} else {
-		log.Println("false")
 		tmpl.ExecuteTemplate(w, "try_again", nil)
 	}
-
-	log.Println("RENDER NEW BUTTON")
 }
 
 func TryAgainHandler(w http.ResponseWriter, r *http.Request) {
@@ -155,9 +147,6 @@ func TryAgainHandler(w http.ResponseWriter, r *http.Request) {
 func NewEquationHandler(w http.ResponseWriter, r *http.Request) {
 	operator := r.FormValue("operator")
 	digits, _ := strconv.Atoi(r.FormValue("digits"))
-	log.Println("NEW EQUATION")
-	log.Println(operator)
-	log.Println(digits)
 	state := &models.Equation{
 		Digits:     digits,
 		FirstTerm:  utils.NewTerm(digits),
@@ -165,7 +154,7 @@ func NewEquationHandler(w http.ResponseWriter, r *http.Request) {
 		Operator:   operator,
 	}
 	tmpl.ExecuteTemplate(w, "_flash-card", state)
-	timer := time.NewTimer(1 * time.Second)
+	timer := time.NewTimer(100 * time.Millisecond)
 	go func() {
 		<-timer.C
 		stringState, err := json.Marshal(state)
