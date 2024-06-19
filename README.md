@@ -4,6 +4,7 @@
 ## Roadmap
 Thanks for checking out Flashy! Here's some features I'm adding in the future!
 - Division problems
+- Design update
 - Setting amount of digits for each term
 - User badges (think achievements)
 - More engaging design
