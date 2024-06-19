@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"log"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 func NewTerm(d int) int {
 	maxNum, _ := strconv.Atoi(strings.Repeat("9", d))
+	log.Println(maxNum)
 	n := rand.Intn(maxNum)
 	return n
 }

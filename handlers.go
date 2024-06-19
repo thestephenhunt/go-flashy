@@ -139,7 +139,7 @@ func AnswerHandler(w http.ResponseWriter, r *http.Request) {
 	if utils.Solve(firstTerm, secondTerm, operator) == answer {
 		log.Println("true")
 		log.Println(operator)
-		tmpl.ExecuteTemplate(w, "good_job", operator)
+		tmpl.ExecuteTemplate(w, "good_job", nil)
 	} else {
 		log.Println("false")
 		tmpl.ExecuteTemplate(w, "try_again", nil)
@@ -157,6 +157,7 @@ func NewEquationHandler(w http.ResponseWriter, r *http.Request) {
 	digits, _ := strconv.Atoi(r.FormValue("digits"))
 	log.Println("NEW EQUATION")
 	log.Println(operator)
+	log.Println(digits)
 	state := &models.Equation{
 		Digits:     digits,
 		FirstTerm:  utils.NewTerm(digits),

@@ -7,6 +7,18 @@
     transform: translateX(100%);
     z-index: 1000;
 
+    @media (prefers-color-scheme: dark) {
+        box-shadow: 5px 1px 5px 2px rgba(255,255,255,0.5);
+    }
+
+    @media (min-resolution: 150dpi) and (max-width: 450px) {
+        right: auto;
+        bottom: 0;
+        transform: translateY(100%);
+        border-radius: 20px 20px 0 0;
+        width: 100%;
+    }
+
     &.opened {
         transform: translateX(0%);
     }
@@ -26,12 +38,28 @@
         cursor: pointer;
 
         @media (prefers-color-scheme: dark) {
-            box-shadow: 4px 6px 4px 1px rgba(255,255,255,0.5);
+            box-shadow: 3px 4px 3px 1px rgba(255,255,255,0.5);
+        }
+
+        @media (min-resolution: 150dpi) and (max-width: 450px) {
+            position: relative;
+            left: 40%;
+            top: -2rem;
+            border-radius: 20px 20px 0 0;
+            display: inline;
+
+            @media (prefers-color-scheme: dark) {
+                box-shadow: 2px -3px 3px 0px rgba(255,255,255,0.5);
+            }
         }
     }
     fieldset {
         font-size: 2.5rem;
         border: none;
+
+        @media (min-resolution: 150dpi) and (max-width: 450px) {
+            font-size: 2rem;
+        }
     }
     h4 {
         color: var(--fontColor);
@@ -42,6 +70,10 @@
         padding-right: 1rem;
         font-size: 2rem;
         color: var(--fontColor);
+
+        @media (min-resolution: 150dpi) and (max-width: 450px) {
+            font-size: 1.5rem;
+        }
     }
     .option-item {
         margin: 1rem 0;
@@ -59,15 +91,17 @@
             appearance: none;
             font-size: 2rem;
         }
-    }
-    .select-wrapper::after {
-      content: "▼";
-      font-size: 1.5rem;
-      top: 14px;
-      right: 5px;
-      position: absolute;
-      color: var(--bgColor);
-      pointer-events: none;
+
+        &::after {
+            content: "▼";
+            font-size: 1.5rem;
+            top: 15%;
+            right: 5px;
+            position: absolute;
+            color: var(--bgColor);
+            pointer-events: none;
+            line-height: 1;
+        }
     }
     #newEqButton {
         display: block;

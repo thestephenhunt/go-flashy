@@ -7,5 +7,5 @@
 {{end}}
 
 {{define "good_job"}}
-    <button type="submit" id="answer-button" hx-post="/new-equation" hx-target="#flash-card" hx-swap="outerHTML" hx-trigger="load delay:1s"><input type="hidden" name="operator" value="{{.}}"/>Great job!</button>
+    <button type="submit" id="answer-button" hx-post="/new-equation" hx-target="#flash-card" hx-swap="outerHTML" hx-trigger="load delay:1s" hx-on:htmx:config-request="AddEquationParams(event)">Great job!</button>
 {{end}}

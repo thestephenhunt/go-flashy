@@ -10,6 +10,11 @@ header {
         color: white;
         text-shadow: 7px 7px 5px rgba(0, 0, 0, 0.7);
         -webkit-text-stroke: 1px black;
+
+        @media (min-resolution: 150dpi) {
+            margin: 1rem 0;
+            font-size: 3.5rem;
+        }
     }
 }
 
@@ -24,7 +29,7 @@ header {
     padding-right: 54px;
     padding-top: 80px;
     transition: left 0.3 ease;
-    z-index: 999;
+    z-index: 1001;
 
     &.opened {
         left: 0;
@@ -77,12 +82,18 @@ header {
     display: block;
     text-decoration: none;
     visibility: visible;
-    padding: 2em;
+    padding: 2rem;
     outline: none;
     width: 3rem;
     height: 3rem;
     position: absolute;
     left: 0;
+
+    @media (min-resolution: 150dpi) {
+        padding: 1rem;
+        width: 2rem;
+        height: 2rem;
+    }
 
     &:hover {
         border-bottom: none;
@@ -90,7 +101,7 @@ header {
 
     img {
         width: 100%;
-        filter: drop-shadow(3px 5px 2px rgba(0,0,0,0.5))
+        filter: drop-shadow(3px 5px 2px rgba(0,0,0,0.5));
     }
 }
 
