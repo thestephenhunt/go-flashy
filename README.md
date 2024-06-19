@@ -8,5 +8,6 @@ Thanks for checking out Flashy! Here's some features I'm adding in the future!
 - User badges (think achievements)
 - More engaging design
 - Speedruns (how fast can you answer x number of equations?)
+- Custom problem sets (think multiplication tables)
 
-** Please feel free to report any issues you find in the issues tab above. **
+**Please feel free to report any issues you find in the issues tab above.**
